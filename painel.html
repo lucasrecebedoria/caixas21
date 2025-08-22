@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel - MoveBuss</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase.js"></script>
+</head>
+<body class="bg">
+  <div class="topbar">
+    <span id="userInfo"></span>
+    <button onclick="logout()">Sair</button>
+  </div>
+  <div class="sidebar">
+    <button onclick="abrirCaixa()">Abrir Caixa</button>
+    <button onclick="fecharCaixa()">Fechar Caixa</button>
+  </div>
+  <div class="content">
+    <h2>Bem-vindo ao Painel</h2>
+    <div id="caixaStatus">Status: Nenhum caixa aberto</div>
+  </div>
+
+  <script type="module">
+    import { auth, signOut, db, doc, setDoc, getDoc, updateDoc } from './firebase.js';
+
+    const matricula = localStorage.getItem("userMatricula");
+    if (!matricula) window.location.href = "index.html";
+
+    document.getElementById("userInfo").innerText = "Matrícula: " + matricula;
+
+    async function abrirCaixa() {
+      const ref = doc(db, "caixas", matricula);
+      await setDoc(ref, { aberto: true, horaAbertura: new Date() });
+      document.getElementById("caixaStatus").innerText = "Status: Caixa Aberto";
+    }
+
+    async function fecharCaixa() {
+      const ref = doc(db, "caixas", matricula);
+      await updateDoc(ref, { aberto: false, horaFechamento: new Date() });
+      document.getElementById("caixaStatus").innerText = "Status: Caixa Fechado";
+    }
+
+    async function logout() {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    window.abrirCaixa = abrirCaixa;
+    window.fecharCaixa = fecharCaixa;
+    window.logout = logout;
+  </script>
+</body>
+</html>

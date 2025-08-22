@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro - MoveBuss</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase.js"></script>
+</head>
+<body class="bg">
+  <div class="container">
+    <img src="MOVE_BUSS_LOGO02.png" class="logo">
+    <h2>Cadastro</h2>
+    <input type="text" id="registerMatricula" placeholder="Matrícula">
+    <input type="text" id="registerNome" placeholder="Nome">
+    <input type="password" id="registerSenha" placeholder="Senha">
+    <button onclick="register()">Cadastrar</button>
+    <p>Já tem conta? <a href="index.html">Voltar para login</a></p>
+  </div>
+
+  <script type="module">
+    import { auth, createUserWithEmailAndPassword, db, setDoc, doc } from './firebase.js';
+
+    async function register() {
+      const matricula = document.getElementById('registerMatricula').value;
+      const nome = document.getElementById('registerNome').value;
+      const senha = document.getElementById('registerSenha').value;
+      try {
+        await createUserWithEmailAndPassword(auth, matricula + '@movebuss.com', senha);
+        await setDoc(doc(db, "usuarios", matricula), {
+          matricula, nome, isAdmin: ["4144","70029","6266"].includes(matricula)
+        });
+        alert("Cadastro realizado!");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    }
+    window.register = register;
+  </script>
+</body>
+</html>

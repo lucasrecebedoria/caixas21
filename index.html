@@ -1,157 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - MOVE BUSS</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle, #1a1a1a, #000000);
-      color: white;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      background: rgba(30, 30, 30, 0.9);
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
-      width: 350px;
-      text-align: center;
-    }
-    h2 {
-      margin-bottom: 1rem;
-      color: #00ff88;
-      text-shadow: 0 0 5px #00ff88;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 2px solid #00aa44;
-      border-radius: 10px;
-      background: #111;
-      color: white;
-      font-size: 1rem;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      background: linear-gradient(90deg, #008833, #00ff66);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: transform 0.2s ease-in-out;
-    }
-    button:hover {
-      transform: scale(1.05);
-    }
-    a {
-      color: #00ff88;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Login - MoveBuss</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase.js"></script>
 </head>
-<body>
+<body class="bg">
   <div class="container">
-    <div id="login-screen">
-      <h2>Login</h2>
-      <input type="text" id="loginMatricula" placeholder="Matrícula" />
-      <input type="password" id="loginSenha" placeholder="Senha" />
-      <button onclick="login()">Entrar</button>
-      <p>Não tem conta? <a onclick="showRegister()">Cadastrar nova conta</a></p>
-    </div>
-
-    <div id="register-screen" class="hidden">
-      <h2>Cadastrar Conta</h2>
-      <input type="text" id="registerMatricula" placeholder="Matrícula" />
-      <input type="text" id="registerNome" placeholder="Nome" />
-      <input type="password" id="registerSenha" placeholder="Senha" />
-      <button onclick="register()">Cadastrar</button>
-      <p>Já tem conta? <a onclick="showLogin()">Voltar para login</a></p>
-    </div>
+    <img src="MOVE_BUSS_LOGO02.png" class="logo">
+    <h2>Login</h2>
+    <input type="text" id="loginMatricula" placeholder="Matrícula">
+    <input type="password" id="loginSenha" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <p>Não tem conta? <a href="register.html">Cadastrar nova conta</a></p>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc } 
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { auth, signInWithEmailAndPassword } from './firebase.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxQliXm59BRg9zsVpK5qthB0nowqU0GEg",
-      authDomain: "lancamentomanual-6cac4.firebaseapp.com",
-      projectId: "lancamentomanual-6cac4",
-      storageBucket: "lancamentomanual-6cac4.firebasestorage.app",
-      messagingSenderId: "710102934933",
-      appId: "1:710102934933:web:a5dc954d01d40518a5c29c",
-      measurementId: "G-MLLXPXR7EC"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    window.showRegister = function() {
-      document.getElementById("login-screen").classList.add("hidden");
-      document.getElementById("register-screen").classList.remove("hidden");
-    };
-
-    window.showLogin = function() {
-      document.getElementById("register-screen").classList.add("hidden");
-      document.getElementById("login-screen").classList.remove("hidden");
-    };
-
-    window.register = async function() {
-      const matricula = document.getElementById("registerMatricula").value;
-      const nome = document.getElementById("registerNome").value;
-      const senha = document.getElementById("registerSenha").value;
-
+    async function login() {
+      const matricula = document.getElementById('loginMatricula').value;
+      const senha = document.getElementById('loginSenha').value;
       try {
-        const email = matricula + "@fake.com"; // usar matrícula como base
-        const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-        await setDoc(doc(db, "usuarios", userCredential.user.uid), {
-          matricula: matricula,
-          nome: nome,
-          role: "user"
-        });
-        alert("Conta criada com sucesso!");
-        showLogin();
-      } catch (error) {
-        alert("Erro: " + error.message);
-      }
-    };
-
-    window.login = async function() {
-      const matricula = document.getElementById("loginMatricula").value;
-      const senha = document.getElementById("loginSenha").value;
-
-      try {
-        const email = matricula + "@fake.com";
-        await signInWithEmailAndPassword(auth, email, senha);
-        alert("Login realizado com sucesso!");
-        // Redirecionar para o painel principal
+        const userCredential = await signInWithEmailAndPassword(auth, matricula + '@movebuss.com', senha);
+        localStorage.setItem("userMatricula", matricula);
         window.location.href = "painel.html";
       } catch (error) {
-        alert("Erro: " + error.message);
+        alert("Erro ao logar: " + error.message);
       }
-    };
+    }
+    window.login = login;
   </script>
 </body>
 </html>

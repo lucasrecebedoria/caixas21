@@ -1,0 +1,44 @@
+body.bg {
+  background: radial-gradient(circle, #222 1px, #000 1px);
+  background-size: 20px 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+.container {
+  margin-top: 50px;
+  padding: 20px;
+  background: rgba(0,0,0,0.8);
+  border: 2px solid #0f0;
+  border-radius: 15px;
+  display: inline-block;
+}
+input, button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #0f0;
+  background: black;
+  color: white;
+  width: 200px;
+}
+button {
+  background: linear-gradient(145deg, #0f0, #090);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: scale(1.1);
+}
+.logo { width: 120px; margin-bottom: 20px; }
+.topbar {
+  background: #111;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.sidebar {
+  background: #222;
+  padding: 10px;
+}
