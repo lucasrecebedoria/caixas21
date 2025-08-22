@@ -3,34 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - MoveBuss</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="firebase.js"></script>
+  <script type="module" src="login.js"></script>
 </head>
-<body class="bg">
-  <div class="container">
-    <img src="MOVE_BUSS_LOGO02.png" class="logo">
-    <h2>Login</h2>
-    <input type="text" id="loginMatricula" placeholder="Matrícula">
-    <input type="password" id="loginSenha" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-    <p>Não tem conta? <a href="register.html">Cadastrar nova conta</a></p>
-  </div>
-
-  <script type="module">
-    import { auth, signInWithEmailAndPassword } from './firebase.js';
-
-    async function login() {
-      const matricula = document.getElementById('loginMatricula').value;
-      const senha = document.getElementById('loginSenha').value;
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, matricula + '@movebuss.com', senha);
-        localStorage.setItem("userMatricula", matricula);
-        window.location.href = "painel.html";
-      } catch (error) {
-        alert("Erro ao logar: " + error.message);
-      }
-    }
-    window.login = login;
-  </script>
+<body>
+  <h2>Login</h2>
+  <input id="matricula" placeholder="Matrícula" />
+  <input id="senha" type="password" placeholder="Senha" />
+  <button id="loginBtn">Entrar</button>
+  <p><a href="register.html">Cadastrar nova conta</a></p>
 </body>
 </html>
