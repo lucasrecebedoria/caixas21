@@ -3,121 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoveBuss • Caixa</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <!-- Firebase SDKs -->
-  <script type="module" src="js/app.js" defer></script>
+  <title>Login - MOVE BUSS</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle, #1a1a1a, #000000);
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: rgba(30, 30, 30, 0.9);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+      width: 350px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: #00ff88;
+      text-shadow: 0 0 5px #00ff88;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #00aa44;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #008833, #00ff66);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    a {
+      color: #00ff88;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <div id="bgTexture"></div>
-  <header class="topbar">
-    <div class="brand">
-      <img src="assets/MOVE_BUSS_LOGO02.png" alt="MoveBuss" />
-      <span>Controle de Caixa</span>
+  <div class="container">
+    <div id="login-screen">
+      <h2>Login</h2>
+      <input type="text" id="loginMatricula" placeholder="Matrícula" />
+      <input type="password" id="loginSenha" placeholder="Senha" />
+      <button onclick="login()">Entrar</button>
+      <p>Não tem conta? <a onclick="showRegister()">Cadastrar nova conta</a></p>
     </div>
-    <div class="user-area" id="userArea" style="display:none;">
-      <span id="userName">—</span>
-      <span id="userMatricula" class="badge badge-green">—</span>
-      <button id="btnChangePassword" class="btn btn-outline">Alterar senha</button>
-      <button id="btnLogout" class="btn btn-outline">Deslogar</button>
+
+    <div id="register-screen" class="hidden">
+      <h2>Cadastrar Conta</h2>
+      <input type="text" id="registerMatricula" placeholder="Matrícula" />
+      <input type="text" id="registerNome" placeholder="Nome" />
+      <input type="password" id="registerSenha" placeholder="Senha" />
+      <button onclick="register()">Cadastrar</button>
+      <p>Já tem conta? <a onclick="showLogin()">Voltar para login</a></p>
     </div>
-  </header>
+  </div>
 
-  <aside class="sidebar">
-    <button id="sidebarToggle" class="btn btn-primary">☰ Menu</button>
-    <nav id="menu" class="menu hidden">
-      <button id="menuAbertura" class="menu-item">Abertura e fechamento de caixa</button>
-    </nav>
-  </aside>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <main class="container">
-    <!-- Auth -->
-    <section id="authSection">
-      <div class="card">
-        <h2>Entrar</h2>
-        <div class="grid">
-          <label>Matrícula</label>
-          <input type="text" id="loginMatricula" maxlength="10" />
-          <label>Senha</label>
-          <input type="password" id="loginSenha" />
-        </div>
-        <button id="btnLogin" class="btn btn-primary">Login</button>
-      </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxQliXm59BRg9zsVpK5qthB0nowqU0GEg",
+      authDomain: "lancamentomanual-6cac4.firebaseapp.com",
+      projectId: "lancamentomanual-6cac4",
+      storageBucket: "lancamentomanual-6cac4.firebasestorage.app",
+      messagingSenderId: "710102934933",
+      appId: "1:710102934933:web:a5dc954d01d40518a5c29c",
+      measurementId: "G-MLLXPXR7EC"
+    };
 
-      <div class="card">
-        <h2>Criar conta</h2>
-        <div class="grid">
-          <label>Matrícula</label>
-          <input type="text" id="cadMatricula" maxlength="10" />
-          <label>Nome</label>
-          <input type="text" id="cadNome" />
-          <label>Senha</label>
-          <input type="password" id="cadSenha" />
-        </div>
-        <button id="btnCadastrar" class="btn btn-primary">Cadastrar</button>
-      </div>
-    </section>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    <!-- Caixa -->
-    <section id="caixaSection" class="hidden">
-      <div class="card">
-        <div class="flex-between">
-          <h2>Status do Caixa: <span id="caixaStatus">—</span></h2>
-          <div class="right-actions">
-            <button id="btnAbrirCaixa" class="btn btn-primary hidden">Abrir novo caixa</button>
-            <button id="btnFecharCaixa" class="btn btn-danger hidden">Fechar caixa</button>
-          </div>
-        </div>
-        <p id="mensagemStatus" class="muted"></p>
-      </div>
+    window.showRegister = function() {
+      document.getElementById("login-screen").classList.add("hidden");
+      document.getElementById("register-screen").classList.remove("hidden");
+    };
 
-      <div id="formsArea">
-        <div class="card" id="lancamentoCard">
-          <h3>Abastecimento / Lançamento</h3>
-          <div class="grid">
-            <label>Tipo de validador</label>
-            <select id="validador">
-              <option value="PRODATA">PRODATA</option>
-              <option value="DIGICON">DIGICON</option>
-            </select>
+    window.showLogin = function() {
+      document.getElementById("register-screen").classList.add("hidden");
+      document.getElementById("login-screen").classList.remove("hidden");
+    };
 
-            <label>Quantidade de bordos</label>
-            <input type="number" id="qtdBordos" min="1" value="1" />
+    window.register = async function() {
+      const matricula = document.getElementById("registerMatricula").value;
+      const nome = document.getElementById("registerNome").value;
+      const senha = document.getElementById("registerSenha").value;
 
-            <label>Valor (R$)</label>
-            <input type="number" id="valor" disabled />
+      try {
+        const email = matricula + "@fake.com"; // usar matrícula como base
+        const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+        await setDoc(doc(db, "usuarios", userCredential.user.uid), {
+          matricula: matricula,
+          nome: nome,
+          role: "user"
+        });
+        alert("Conta criada com sucesso!");
+        showLogin();
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    };
 
-            <label>Prefixo</label>
-            <div class="prefixo-wrap">
-              <span class="prefixo-fixo">55</span>
-              <input type="text" id="prefixo" maxlength="3" placeholder="___" />
-            </div>
+    window.login = async function() {
+      const matricula = document.getElementById("loginMatricula").value;
+      const senha = document.getElementById("loginSenha").value;
 
-            <label>Data do caixa</label>
-            <input type="text" id="dataCaixa" placeholder="dd/mm/aaaa" />
-
-            <label>Matrícula motorista</label>
-            <input type="text" id="matMotorista" />
-          </div>
-          <button id="btnSalvarLancamento" class="btn btn-primary">Salvar e imprimir recibo</button>
-        </div>
-
-        <div class="card" id="sangriaCard">
-          <h3>Sangria (requer aprovação do admin)</h3>
-          <div class="grid">
-            <label>Valor a ser sangrado (R$)</label>
-            <input type="number" id="valorSangria" min="0" step="0.01" />
-            <label>Motivo da sangria</label>
-            <input type="text" id="motivoSangria" />
-          </div>
-          <button id="btnPedirSangria" class="btn btn-outline">Solicitar sangria</button>
-          <div id="sangriaAviso" class="muted"></div>
-          <div id="sangriasPendentes" class="muted"></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">© MoveBuss</footer>
+      try {
+        const email = matricula + "@fake.com";
+        await signInWithEmailAndPassword(auth, email, senha);
+        alert("Login realizado com sucesso!");
+        // Redirecionar para o painel principal
+        window.location.href = "painel.html";
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    };
+  </script>
 </body>
 </html>
