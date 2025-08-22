@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoveBuss • Caixa</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- Firebase SDKs -->
+  <script type="module" src="js/app.js" defer></script>
+</head>
+<body>
+  <div id="bgTexture"></div>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/MOVE_BUSS_LOGO02.png" alt="MoveBuss" />
+      <span>Controle de Caixa</span>
+    </div>
+    <div class="user-area" id="userArea" style="display:none;">
+      <span id="userName">—</span>
+      <span id="userMatricula" class="badge badge-green">—</span>
+      <button id="btnChangePassword" class="btn btn-outline">Alterar senha</button>
+      <button id="btnLogout" class="btn btn-outline">Deslogar</button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <button id="sidebarToggle" class="btn btn-primary">☰ Menu</button>
+    <nav id="menu" class="menu hidden">
+      <button id="menuAbertura" class="menu-item">Abertura e fechamento de caixa</button>
+    </nav>
+  </aside>
+
+  <main class="container">
+    <!-- Auth -->
+    <section id="authSection">
+      <div class="card">
+        <h2>Entrar</h2>
+        <div class="grid">
+          <label>Matrícula</label>
+          <input type="text" id="loginMatricula" maxlength="10" />
+          <label>Senha</label>
+          <input type="password" id="loginSenha" />
+        </div>
+        <button id="btnLogin" class="btn btn-primary">Login</button>
+      </div>
+
+      <div class="card">
+        <h2>Criar conta</h2>
+        <div class="grid">
+          <label>Matrícula</label>
+          <input type="text" id="cadMatricula" maxlength="10" />
+          <label>Nome</label>
+          <input type="text" id="cadNome" />
+          <label>Senha</label>
+          <input type="password" id="cadSenha" />
+        </div>
+        <button id="btnCadastrar" class="btn btn-primary">Cadastrar</button>
+      </div>
+    </section>
+
+    <!-- Caixa -->
+    <section id="caixaSection" class="hidden">
+      <div class="card">
+        <div class="flex-between">
+          <h2>Status do Caixa: <span id="caixaStatus">—</span></h2>
+          <div class="right-actions">
+            <button id="btnAbrirCaixa" class="btn btn-primary hidden">Abrir novo caixa</button>
+            <button id="btnFecharCaixa" class="btn btn-danger hidden">Fechar caixa</button>
+          </div>
+        </div>
+        <p id="mensagemStatus" class="muted"></p>
+      </div>
+
+      <div id="formsArea">
+        <div class="card" id="lancamentoCard">
+          <h3>Abastecimento / Lançamento</h3>
+          <div class="grid">
+            <label>Tipo de validador</label>
+            <select id="validador">
+              <option value="PRODATA">PRODATA</option>
+              <option value="DIGICON">DIGICON</option>
+            </select>
+
+            <label>Quantidade de bordos</label>
+            <input type="number" id="qtdBordos" min="1" value="1" />
+
+            <label>Valor (R$)</label>
+            <input type="number" id="valor" disabled />
+
+            <label>Prefixo</label>
+            <div class="prefixo-wrap">
+              <span class="prefixo-fixo">55</span>
+              <input type="text" id="prefixo" maxlength="3" placeholder="___" />
+            </div>
+
+            <label>Data do caixa</label>
+            <input type="text" id="dataCaixa" placeholder="dd/mm/aaaa" />
+
+            <label>Matrícula motorista</label>
+            <input type="text" id="matMotorista" />
+          </div>
+          <button id="btnSalvarLancamento" class="btn btn-primary">Salvar e imprimir recibo</button>
+        </div>
+
+        <div class="card" id="sangriaCard">
+          <h3>Sangria (requer aprovação do admin)</h3>
+          <div class="grid">
+            <label>Valor a ser sangrado (R$)</label>
+            <input type="number" id="valorSangria" min="0" step="0.01" />
+            <label>Motivo da sangria</label>
+            <input type="text" id="motivoSangria" />
+          </div>
+          <button id="btnPedirSangria" class="btn btn-outline">Solicitar sangria</button>
+          <div id="sangriaAviso" class="muted"></div>
+          <div id="sangriasPendentes" class="muted"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© MoveBuss</footer>
+</body>
+</html>
